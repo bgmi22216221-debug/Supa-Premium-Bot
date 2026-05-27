@@ -42,7 +42,7 @@ BUY_PREMIUM_MSG = (
     f"🚫 Aapke *{APPROVAL_DAYS} din* poore ho gaye hain.\n\n"
     "🔓 *Premium Access Kaise Lein?*\n"
     "👉 Admin se sampark karein aur apna subscription renew karein.\n\n"
-    f"📩 Admin: {ADMIN_USERNAME}\n"
+    f"📩 Admin: `{ADMIN_USERNAME}`\n"
     "━━━━━━━━━━━━━━━━━━━━\n"
     "✨ _Premium members ko unlimited access milta hai!_"
 )
@@ -220,7 +220,7 @@ async def expiry_checker(bot: Bot):
                     f"━━━━━━━━━━━━━━━━━━━━\n"
                     f"📅 Aapka premium *{exp_str}* ko expire ho jayega.\n\n"
                     f"🔓 Ab hi renew karo — admin se sampark karo:\n"
-                    f"📩 {ADMIN_USERNAME}\n"
+                    f"📩 `{ADMIN_USERNAME}`\n"
                     f"━━━━━━━━━━━━━━━━━━━━\n"
                     f"✨ _Access khatam hone se pehle renew karo!_"
                 )
