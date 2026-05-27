@@ -42,7 +42,6 @@ BUY_PREMIUM_MSG = (
     f"🚫 Aapke *{APPROVAL_DAYS} din* poore ho gaye hain.\n\n"
     "🔓 *Premium Access Kaise Lein?*\n"
     "👉 Admin se sampark karein aur apna subscription renew karein.\n\n"
-    f"📩 Admin: `{ADMIN_USERNAME}`\n"
     "━━━━━━━━━━━━━━━━━━━━\n"
     "✨ _Premium members ko unlimited access milta hai!_"
 )
@@ -478,6 +477,20 @@ async def auto_delete(bot: Bot, chat_id: int, message_id: int, delay: int):
             chat_id, message_id, delete_at
         )
 
+async def send_welcome_video(bot: Bot, user_id: int):
+    """Send first video to newly approved user with 10-min auto-delete."""
+    try:
+        media = await get_next_media(user_id)
+        if not media:
+            return
+        await mark_seen(user_id, media["id"])
+        msg = await _copy_media(bot, user_id, media)
+        await auto_delete(bot, user_id, msg.message_id, 600)  # 10 min
+        await save_position(user_id, media["id"], msg.message_id)
+    except Exception as e:
+        logger.error(f"send_welcome_video error for {user_id}: {e}")
+
+
 async def deletion_loop(bot: Bot):
     """Runs every 30 seconds — deletes messages whose time has come."""
     while True:
@@ -668,6 +681,7 @@ async def button_handler(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
                     f"🎉 *Aapka access restore ho gaya!*\n\n📅 Expiry: *{expires.strftime('%d %b %Y')}*\n\n/start dabao aur enjoy karo 🚀",
                     parse_mode="Markdown"
                 )
+                await send_welcome_video(ctx.bot, target_id)
             except TelegramError:
                 pass
         elif data.startswith("reject_"):
@@ -1018,6 +1032,7 @@ async def approve_cmd(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
             f"🎉 *Aapka access restore ho gaya!*\n\n📅 Expiry: *{expires.strftime('%d %b %Y')}*\n\n/start dabao aur enjoy karo 🚀",
             parse_mode="Markdown"
         )
+        await send_welcome_video(ctx.bot, target_id)
     except TelegramError:
         pass
 
